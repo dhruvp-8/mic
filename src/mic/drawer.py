@@ -46,3 +46,6 @@ def show_values(request, request_property, variable_name):
 
 def show_error(request_message):
     click.secho(request_message, fg="red")
+
+def show_warning(request_message):
+    click.secho(request_message, fg="yellow")

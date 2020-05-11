@@ -57,3 +57,14 @@ class ModelCli:
         except ApiException as e:
             logging.error("Exception when calling ModelConfigurationSetupApi->modelconfigurationsetups_post: %s\n" % e)
             raise e
+    
+    def get_by_label(self, label):
+        api, username = get_api()
+        api_instance = modelcatalog.ModelApi(api_client=api)
+
+        try:
+            api_response = api_instance.models_get(username=username, label=label[0])
+            return api_response
+        except ApiException as e:
+            logging.error("Exception when calling ModelApi->models_get: %s\n" % e)
+            raise e

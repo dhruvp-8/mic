@@ -1,6 +1,6 @@
 from mic._mappings import get_definition, get_prop_mapping, get_type_mapping, select_enable, is_complex
 from mic._model_catalog_utils import get_label_from_response, create_request, get_existing_resources
-from mic.drawer import print_request, print_choices, show_values_complex, show_values, show_error
+from mic.drawer import print_request, print_choices, show_values_complex, show_values, show_error, show_warning
 from mic.file import save
 from mic._utils import first_line_new, validate_metadata
 import click
@@ -427,12 +427,18 @@ def handle_actions(request, action, mapping, resource_object, full_request, pare
         return click.confirm("Exit?", default=False)
     elif action == ACTION_CHOICES[2]:
         # PUSH
-        menu_push(full_request, resource_object, parent=parent)
-        save(full_request)
-        if request["id"] and click.confirm("See the model/config/setup on your browser?", default=False):
-            click.launch("{}{}".format(MODEL_CATALOG_URL, request["id"]))
-        if request["id"]:
-            click.echo("Online URI for model/configuration/setup: " + MODEL_CATALOG_URL + request["id"])
+        api_response = resource_object.get_by_label(full_request["label"])
+        if not api_response:
+            menu_push(full_request, resource_object, parent=parent)
+            save(full_request)
+
+            if request["id"] and click.confirm("See the model/config/setup on your browser?", default=False):
+                click.launch("{}{}".format(MODEL_CATALOG_URL, request["id"]))
+            if request["id"]:
+                click.echo("Online URI for model/configuration/setup: " + MODEL_CATALOG_URL + request["id"])
+        else:
+            show_warning("[Push Failed] The model with same label already exists.")
+            return not click.confirm("Do you want to edit label and repush?", default = False)
     elif action == ACTION_CHOICES[3]:
         pass
     return True

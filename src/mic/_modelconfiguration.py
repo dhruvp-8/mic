@@ -51,3 +51,15 @@ class ModelConfigurationCli:
                 "Exception when calling ModelConfigurationConfigurationSetupApi->modelconfigurationsetups_post: %s\n" % e)
             raise e
         return api_response
+    
+    @staticmethod
+    def get_by_label(label):
+        api, username = get_api()
+        api_instance = modelcatalog.ModelConfigurationApi(api_client=api)
+
+        try:
+            api_response = api_instance.modelconfigurations_get(username=username, label=label[0])
+            return api_response
+        except ApiException as e:
+            logging.error("Exception when calling ModelConfigurationConfigurationAPIs->modelconfigurations_get: %s\n" % e)
+            raise e
